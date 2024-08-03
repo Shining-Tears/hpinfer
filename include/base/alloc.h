@@ -6,9 +6,10 @@
 #include <cstring>
 #include <iostream>
 #include <mutex>
+#include <vector>
 
 enum class DeviceType {
-    kDeviceUnkown = 0,
+    kDeviceUnknown = 0,
     kDeviceCPU = 1,
     kDeviceCUDA = 2,
 };
