@@ -8,7 +8,7 @@ class Buffer : std::enable_shared_from_this<Buffer> {
     size_t byte_size_ = 0;
     void* ptr_ = nullptr;
     bool use_external_ = false;
-    DeviceType device_type_ = DeviceType::kDeviceUnkown;
+    DeviceType device_type_ = DeviceType::kDeviceUnknown;
     std::shared_ptr<DeviceAllocator> allocator_;
 
 public:
