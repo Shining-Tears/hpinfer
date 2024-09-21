@@ -47,6 +47,7 @@ void CPUDeviceAllocator::release(void* ptr) const {
     }
 }
 
+// 派生类构造函数中初始化基类部分应该在构造函数的初始化列表中进行
 CUDADeviceAllocator::CUDADeviceAllocator() : DeviceAllocator(DeviceType::kDeviceCUDA) {};
 
 void* CUDADeviceAllocator::allocate(size_t byte_size) const {

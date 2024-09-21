@@ -125,6 +125,16 @@
     "set": "cpp",
     "span": "cpp",
     "sstream": "cpp",
-    "variant": "cpp"
+    "variant": "cpp",
+    "codecvt": "cpp",
+    "complex": "cpp",
+    "fstream": "cpp",
+    "iomanip": "cpp",
+    "shared_mutex": "cpp",
+    "cfenv": "cpp",
+    "__bit_reference": "cpp",
+    "__split_buffer": "cpp",
+    "filesystem": "cpp",
+    "ios": "cpp"
   }
 }

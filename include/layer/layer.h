@@ -1,33 +1,7 @@
 #pragma once
 
 #include "base/alloc.h"
-
-enum class DataType {
-  kDataTypeUnknown = 0,
-  kDataTypeFp32 = 1,
-  kDataTypeFp16 = 1,
-  kDataTypeInt8 = 2,
-  kDataTypeInt32 = 3,
-};
-
-enum class LayerType {
-  kLayerUnknown = 0,
-  kLayerLinear = 1,
-  kLayerEncode = 2,
-  kLayerEmbedding = 3,
-  kLayerRMSNorm = 4,
-  kLayerMatmul = 5,
-  kLayerRoPe = 6,
-  kLayerMHA = 7,
-  kLayerSoftmax = 8,
-  kLayerAdd = 9,
-  kLayerSwiGLU = 10,
-};
-
-enum class ModelType : uint8_t {
-  kModelTypeUnknown = 0,
-  kModelTypeLLama2 = 1,
-};
+#include "layer/tensor.h"
 
 namespace hpinfer {
 class BaseLayer {

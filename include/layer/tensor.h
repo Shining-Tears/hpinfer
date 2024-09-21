@@ -7,14 +7,41 @@
 #include "base/buffer.h"
 #include "layer/layer.h"
 
-namespace hpinfer {
+enum class DataType {
+  kDataTypeUnknown = 0,
+  kDataTypeFp32 = 1,
+  kDataTypeFp16 = 2,
+  kDataTypeInt8 = 3,
+  kDataTypeInt32 = 4,
+};
+
+enum class LayerType {
+  kLayerUnknown = 0,
+  kLayerLinear = 1,
+  kLayerEncode = 2,
+  kLayerEmbedding = 3,
+  kLayerRMSNorm = 4,
+  kLayerMatmul = 5,
+  kLayerRoPe = 6,
+  kLayerMHA = 7,
+  kLayerSoftmax = 8,
+  kLayerAdd = 9,
+  kLayerSwiGLU = 10,
+};
+
+enum class ModelType : uint8_t {
+  kModelTypeUnknown = 0,
+  kModelTypeLLama2 = 1,
+};
+
+namespace tensor {
 
 class Tensor {
-
-size_t size_ = 0;
-std::vector<int32_t> dims_;
-std::shared_ptr<hpinfer::Buffer> buffer_;
-DataType data_type_ = DataType::kDataTypeUnknown;
+    size_t size_ = 0;
+    size_t byte_size_ = 0;
+    std::vector<int32_t> dims_;
+    std::shared_ptr<hpinfer::Buffer> buffer_;
+    DataType data_type_ = DataType::kDataTypeUnknown;
 
 public:
     explicit Tensor() = default;
@@ -56,6 +83,8 @@ public:
     
     size_t size() const;
 
+    size_t byte_size() const;
+    
     DataType data_type() const;
 
     void set_device_type(DeviceType device_type) const;
@@ -76,8 +105,7 @@ public:
     template <typename T>
     const T& index(int64_t offset) const;
 
-    hpinfer::Tensor clone() const;
+    tensor::Tensor clone() const;
     
-}
-
 };
+}

@@ -3,6 +3,7 @@
 #include "base/alloc.h"
 
 class CPUDeviceAllocatorFactory {
+    
     static std::shared_ptr<CPUDeviceAllocator> instance;
     static std::once_flag initInstanceFlag;
 
