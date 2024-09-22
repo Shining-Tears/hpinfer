@@ -9,7 +9,7 @@ std::once_flag CUDADeviceAllocatorFactory::initInstanceFlag;
 
 std::shared_ptr<CPUDeviceAllocator> CPUDeviceAllocatorFactory::get_instance() {
     if (instance == nullptr) {
-        std::call_once(initInstanceFlag, []() {
+        std::call_once(initInstanceFlag, [&]() {
             instance = std::make_shared<CPUDeviceAllocator>();});
     }
     return instance;
@@ -17,7 +17,7 @@ std::shared_ptr<CPUDeviceAllocator> CPUDeviceAllocatorFactory::get_instance() {
 
 std::shared_ptr<CUDADeviceAllocator> CUDADeviceAllocatorFactory::get_instance() {
     if (instance == nullptr) {
-        std::call_once(initInstanceFlag, []() {
+        std::call_once(initInstanceFlag, [&]() {
             instance = std::make_shared<CUDADeviceAllocator>();});
     }
     return instance;

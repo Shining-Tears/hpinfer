@@ -58,16 +58,14 @@ public:
     explicit Tensor(DataType data_type, std::vector<int32_t> dims, bool need_alloc = false,
                 std::shared_ptr<DeviceAllocator> alloc = nullptr, void* ptr = nullptr);
 
-    void to_cpu();
+    void to_cpu(void* stream = nullptr);
 
-    void to_cuda();
+    void to_cuda(void* stream = nullptr);
 
     bool is_empty() const;
 
     void init_buffer(std::shared_ptr<DeviceAllocator> alloc, DataType data_type, bool need_alloc = false,
                 void* ptr);
-    
-    bool assign(std::shared_ptr<hpinfer::Buffer> buffer);
 
     template <typename T>
     T* ptr();
@@ -84,10 +82,8 @@ public:
     size_t size() const;
 
     size_t byte_size() const;
-    
-    DataType data_type() const;
 
-    void set_device_type(DeviceType device_type) const;
+    DataType data_type() const;
 
     const std::vector<int32_t>& dims() const;
 

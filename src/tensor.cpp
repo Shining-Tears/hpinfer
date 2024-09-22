@@ -87,4 +87,129 @@ void Tensor::init_buffer(std::shared_ptr<DeviceAllocator> alloc, DataType data_t
         need_alloc is true" << std::endl;
     }
 }
+
+void Tensor::to_cpu(void* stream) {
+    DeviceType device_type = this->device_type();
+
+    if (device_type == DeviceType::kDeviceCUDA) {
+        size_t byte_size = this->byte_size();
+        auto cpu_alloc = CPUDeviceAllocatorFactory::get_instance();
+        auto cpu_buffer = std::make_shared<hpinfer::Buffer>(byte_size, cpu_alloc);
+        cpu_alloc->memcpy(buffer_->ptr(), cpu_buffer->ptr(), byte_size,
+                      MemcpyKind::kMemcpyCUDA2CPU, static_cast<cudaStream_t>(stream), true);
+        this->buffer_ = cpu_buffer;
+    } else {
+        std::cerr << "The device type of the tensor is not cuda.";
+    }
+}
+
+void Tensor::to_cuda(void* stream) {
+    DeviceType device_type = this->device_type();
+
+    if (device_type == DeviceType::kDeviceCPU) {
+        size_t byte_size = this->byte_size();
+        auto cuda_alloc = CUDADeviceAllocatorFactory::get_instance();
+        auto cuda_buffer = std::make_shared<hpinfer::Buffer>(byte_size, cuda_alloc);
+        cuda_alloc->memcpy(buffer_->ptr(), cuda_buffer->ptr(), byte_size,
+                      MemcpyKind::kMemcpyCUDA2CPU, static_cast<cudaStream_t>(stream), true);
+        this->buffer_ = cuda_buffer;
+    } else {
+        std::cerr << "The device type of the tensor is not cpu.";
+    }
+}
+
+bool Tensor::is_empty() const {
+    return size_ == 0 || buffer_ == nullptr;
+}
+
+void Tensor::reshape(const std::vector<int32_t>& dims) {
+    size_t size = std::accumulate(dims_.begin(), dims_.end(), 1, std::multiplies<>());
+    this->byte_size_ = size * data_type_size(this->data_type());
+
+    if (size > size_) {
+        auto new_buffer = std::make_shared<hpinfer::Buffer>(size * data_type_size(this->data_type_),
+                                                     buffer_->allocator());
+        new_buffer->copy_from(buffer_.get());
+        this->buffer_ = new_buffer;
+    }
+    this->dims_ = dims;
+    this->size_ = size;
+}
+
+size_t Tensor::size() const { return this->size_; }
+
+size_t Tensor::byte_size() const { return this->byte_size_; }
+
+DataType Tensor::data_type() const { return this->data_type_; }
+
+const std::vector<int32_t>& Tensor::dims() const { return this->dims_; }
+
+DeviceType Tensor::device_type() const { return this->buffer_->device_type(); };
+
+void Tensor::reset(DataType data_type, const std::vector<int32_t>& dims) {
+  this->data_type_ = data_type;
+  this->dims_ = dims;
+  this->size_ = std::accumulate(dims_.begin(), dims_.end(), 1, std::multiplies<>());
+  this->buffer_ = nullptr;
+}
+
+Tensor Tensor::clone() const {
+  Tensor new_tensor = *this;
+  size_t byte_size = this->byte_size();
+
+  auto allocator = buffer_->allocator();
+  new_tensor.buffer_ = std::make_shared<hpinfer::Buffer>(byte_size, allocator);
+  new_tensor.buffer_->copy_from(buffer_.get());
+  return new_tensor;
+}
+
+template <typename T>
+T& Tensor::index(int64_t offset) {
+    if (offset < 0 || offset > size_) {
+        std::cerr << "The offeset is illegal."
+    }
+    T& val = *(reinterpret_cast<T*>(buffer_->ptr()) + offset);
+    return val;
+}
+
+template <typename T>
+const T& Tensor::index(int64_t offset) const {
+    if (offset < 0 || offset > size_) {
+        std::cerr << "The offeset is illegal."
+    }
+    const T& val = *(reinterpret_cast<T*>(buffer_->ptr()) + offset);
+    return val;
+}
+
+template <typename T>
+const T* Tensor::ptr() const {
+    if (!buffer_) {
+        return nullptr;
+    }
+    return reinterpret_cast<const T*>(buffer_->ptr());
+}
+
+template <typename T>
+T* Tensor::ptr() {
+    if (!buffer_) {
+        return nullptr;
+    }
+    return reinterpret_cast<T*>(buffer_->ptr());
+}
+
+template <typename T>
+T* Tensor::ptr(int64_t index) {
+    if (!buffer_) {
+        return nullptr;
+    }
+    return reinterpret_cast<T*>(buffer_->ptr()) + index;
+}
+
+template <typename T>
+const T* Tensor::ptr(int64_t index) const {
+    if (!buffer_) {
+            return nullptr;
+    }
+    return reinterpret_cast<const T*>(buffer_->ptr()) + index;
+}
 }
