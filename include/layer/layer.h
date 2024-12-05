@@ -1,8 +1,8 @@
 #pragma once
 
 #include "base/alloc.h"
-#include "layer/tensor.h"
 #include "base/cuda_config.h"
+#include "layer/tensor.h"
 
 namespace hpinfer {
 class BaseLayer {

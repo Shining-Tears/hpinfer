@@ -1,14 +1,11 @@
 #pragma once
 
-#include "base/base.h"
 #include "layer/layer.h"
 
-namespace hpinfer {
+namespace op {
 class VecAddLayer : public Layer {
- public:
+public:
   explicit VecAddLayer(DeviceType device_type);
-
-  void check() const override;
 
   void forward() override;
 };

@@ -5,7 +5,6 @@
 #include <memory>
 #include <vector>
 #include "base/buffer.h"
-#include "layer/layer.h"
 
 enum class DataType {
   kDataTypeUnknown = 0,
